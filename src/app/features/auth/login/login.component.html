@@ -1,16 +1,16 @@
 <div class="login-page">
   <!-- Left panel: branding + features -->
   <div class="login-left">
-    <div class="brand">
+    <!-- CORRECCIÓN: Convertimos todo el brand en un enlace (<a>) que lleva al Home -->
+    <a routerLink="/" class="brand" style="text-decoration: none; color: inherit; cursor: pointer; display: flex; align-items: center; gap: 12px; margin-bottom: 40px; z-index: 10;">
       <div class="brand-icon">
-        <!-- Reemplazado por tu Logo -->
-        <img src="assets/logo-paramo.png" alt="Logo Páramo Sense" width="40" height="40" style="object-fit: contain; filter: brightness(0) invert(1);" />
+        <img src="assets/images/logo-paramo.png" alt="ParamoSense Logo" class="logo">
       </div>
       <div class="brand-text">
         <span class="brand-name">PARAMO</span>
         <span class="brand-sub">SENSE</span>
       </div>
-    </div>
+    </a>
 
     <div class="left-hero">
       <div class="hero-img-container">
@@ -52,8 +52,8 @@
           <div class="card-hero-overlay">
             <div class="brand-mini">
               <div class="brand-icon-mini">
-                <!-- Reemplazado por tu Logo en miniatura -->
-                <img src="assets/logo-paramo.png" alt="Mini Logo" width="20" height="20" style="object-fit: contain; filter: brightness(0) invert(1);" />
+                <!-- CORRECCIÓN: Ruta de imagen corregida para la versión en miniatura -->
+                <img src="../../../../assets/logo-paramo.png" alt="Mini Logo" width="20" height="20" style="object-fit: contain; filter: brightness(0) invert(1);" />
               </div>
               <span>PARAMO SENSE</span>
             </div>
