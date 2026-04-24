@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
+// Importar HttpClient para hacer la petición HTTP (Asegúrate de tener HttpClientModule en app.config.ts)
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,31 +12,38 @@ import { NavbarComponent } from "../../shared/components/navbar/navbar.component
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
-  syncTime = '09:03';
-  userName = 'Ana Martínez';
-  currentDate = 'Marzo 4';
+export class DashboardComponent implements OnInit {
+  // Variable que contendrá todos los datos dinámicos
+  dashboardData: any = null; // Lo ideal es usar la interfaz DashboardData que definimos arriba
+  isLoading = true;
+  error = '';
 
-  activeSensors = 12;
-  totalSensors = 14;
-  criticalAlerts = 2;
-  inactiveSensors = 2;
+  // Inyectamos HttpClient
+  constructor(private http: HttpClient) {}
 
-  // Mini chart data (bar heights)
-  sensorHistory = [12, 13, 12, 12];
-  waterHistory = [280, 290, 275, 280];   // will be divided by 4 in template
-  alertHistory = [0, 1, 0, 1];           // will be multiplied by 20
+  ngOnInit() {
+    this.fetchDashboardData();
+  }
 
-  readings = [
-    { timestamp: '2025-03-02 08:15', sensorId: 'PS-101', type: 'Nivel de agua', value: 78, unit: '%',     status: 'Normal',      statusClass: 'normal' },
-    { timestamp: '2025-03-02 14:40', sensorId: 'PS-204', type: 'Temperatura',   value: 8.4, unit: '°C',   status: 'Advertencia', statusClass: 'warning' },
-    { timestamp: '2025-03-02 21:05', sensorId: 'PS-317', type: 'Conectividad',  value: 0,   unit: 'señal', status: 'Offline',      statusClass: 'offline' },
-    { timestamp: '2025-03-03 09:20', sensorId: 'PS-118', type: 'Humedad',       value: 86,  unit: '%',    status: 'Normal',      statusClass: 'normal' },
-    { timestamp: '2025-03-03 17:55', sensorId: 'PS-233', type: 'Lluvia',        value: 12,  unit: 'mm',   status: 'Info',        statusClass: 'info' },
-  ];
+  fetchDashboardData() {
+    this.isLoading = true;
+    // AQUÍ PONES LA RUTA DE TU API DE NODE.JS/EXPRESS QUE CONECTA CON MONGO
+    const apiUrl = 'http://tu-api-backend.com/api/dashboard';
+
+    this.http.get(apiUrl).subscribe({
+      next: (data) => {
+        this.dashboardData = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando datos de Mongo:', err);
+        this.error = 'No se pudieron cargar los datos del servidor.';
+        this.isLoading = false;
+      }
+    });
+  }
 
   refresh() {
-    this.syncTime = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
-    console.log('Refreshed at', this.syncTime);
+    this.fetchDashboardData();
   }
 }

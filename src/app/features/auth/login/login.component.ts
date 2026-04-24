@@ -1,38 +1,44 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router'; // Importamos Router
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../core/services/auth.service'; // Importamos el servicio
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  // Es vital importar FormsModule para que funcione [(ngModel)]
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'] // o scss según uses
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  // Variables atadas al formulario mediante ngModel
   email = '';
   password = '';
-  showPassword = false;
   rememberMe = false;
+  showPassword = false;
 
-  // Inyectamos el Router para poder navegar entre páginas mediante código
-  constructor(private router: Router) {}
+  // Inyectamos el AuthService y el Router
+  constructor(private authService: AuthService, private router: Router) {}
 
-  // Función que muestra u oculta la contraseña
-  togglePassword(): void {
+  togglePassword() {
     this.showPassword = !this.showPassword;
   }
 
-  // Función que se ejecuta al darle al botón "Iniciar sesión"
-  onLogin(): void {
-    // Aquí más adelante harás la validación real con tu backend.
-    // Por ahora, simulamos el inicio de sesión mandándote al Dashboard.
-    console.log('Simulando inicio de sesión con:', this.email);
+  onLogin() {
+    const credentials = {
+      email: this.email,
+      password: this.password
+    };
 
-    // Navegamos al Dashboard
-    this.router.navigate(['/dashboard']);
+    this.authService.login(credentials).subscribe({
+      next: (response) => {
+        // Si el login es correcto, guardamos el nombre del usuario y vamos al dashboard
+        console.log('Bienvenido', response.userName);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        alert('Error al iniciar sesión: Verifica tu correo o contraseña');
+      }
+    });
   }
 }

@@ -1,181 +1,116 @@
 <div class="dashboard-page">
-  <app-navbar [syncTime]="syncTime" [userName]="userName"></app-navbar>
+  <div *ngIf="isLoading" style="padding: 40px; text-align: center;">
+    Cargando datos del servidor...
+  </div>
 
-  <div class="dashboard-body">
-    <!-- Page Header -->
-    <div class="page-header">
-      <div class="header-left">
-        <h1 class="page-title">Centro de monitoreo hídrico del páramo</h1>
-        <p class="page-subtitle">Seguimiento en tiempo real de sensores IoT, niveles de agua, temperatura, humedad y condiciones críticas para protección de fuentes hídricas y respuesta temprana.</p>
-      </div>
-      <div class="header-right">
-        <div class="date-badge">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>Fecha: <strong>{{ currentDate }}</strong></span>
-        </div>
-        <button class="btn-refresh" (click)="refresh()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/></svg>
-          Actualizar
-        </button>
-        <div class="location-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <strong>Ubicación:</strong> Páramo de Chingaza – Sector B
-        </div>
-      </div>
-    </div>
+  <div *ngIf="error" style="color: red; padding: 40px; text-align: center;">
+    {{ error }}
+  </div>
 
-    <!-- KPI Cards row -->
-    <div class="kpi-row">
-      <div class="kpi-card kpi-sensors">
-        <div class="kpi-header">
-          <span class="kpi-label">Sensores activos</span>
-          <div class="kpi-icon-wrapper green">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.35 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012.26 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.35a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0121 15.22l.92.7z"/></svg>
+  <ng-container *ngIf="dashboardData && !isLoading">
+    <app-navbar [syncTime]="dashboardData.syncTime" [userName]="dashboardData.userName"></app-navbar>
+
+    <div class="dashboard-body">
+      <div class="page-header">
+        <div class="header-left">
+          <h1 class="page-title">Centro de monitoreo hídrico del páramo</h1>
+          <p class="page-subtitle">Seguimiento en tiempo real de sensores IoT...</p>
+        </div>
+        <div class="header-right">
+          <div class="date-badge">
+            <svg>...</svg>
+            <span>Fecha: <strong>{{ dashboardData.currentDate }}</strong></span>
           </div>
-        </div>
-        <div class="kpi-value">{{ activeSensors }}</div>
-        <div class="kpi-sub">Sensores totales: {{ totalSensors }}</div>
-        <div class="kpi-mini-chart">
-          <div *ngFor="let v of sensorHistory; let i = index" class="bar-col">
-            <div class="bar green" [style.height.px]="v * 2.5"></div>
-            <span class="bar-label">Mar {{ i + 1 }}</span>
+          <button class="btn-refresh" (click)="refresh()">
+            <svg>...</svg> Actualizar
+          </button>
+          <div class="location-badge">
+            <svg>...</svg> <strong>Ubicación:</strong> Páramo de Chingaza – Sector B
           </div>
         </div>
       </div>
 
-      <div class="kpi-card kpi-water">
-        <div class="kpi-header">
-          <span class="kpi-label">Estado del nivel hídrico</span>
-          <div class="kpi-icon-wrapper blue">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>
-          </div>
-        </div>
-        <div class="kpi-value status">Estable</div>
-        <div class="kpi-sub">Promedio de agua en la zona: 70%</div>
-        <div class="kpi-mini-chart">
-          <div *ngFor="let v of waterHistory; let i = index" class="bar-col">
-            <div class="bar blue" [style.height.px]="v / 4"></div>
-            <span class="bar-label">Mar {{ i + 1 }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="kpi-card kpi-alerts">
-        <div class="kpi-header">
-          <span class="kpi-label">Alertas críticas</span>
-          <div class="kpi-icon-wrapper red">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          </div>
-        </div>
-        <div class="kpi-value alert-val">{{ criticalAlerts }}</div>
-        <div class="kpi-sub">Sensores inactivos: {{ inactiveSensors }}</div>
-        <div class="kpi-mini-chart">
-          <div *ngFor="let v of alertHistory; let i = index" class="bar-col">
-            <div class="bar red" [style.height.px]="v * 20"></div>
-            <span class="bar-label">Mar {{ i + 1 }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="kpi-card kpi-env">
-        <div class="kpi-header">
-          <span class="kpi-label">Resumen ambiental</span>
-          <div class="kpi-icon-wrapper teal">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.47-1.124-.29-.289-.47-.687-.47-1.124C12.708 17.013 13 16 14.5 16c2.5 0 4-2 4-4.5 0-3.65-2.5-6.5-6.5-6.5"/></svg>
-          </div>
-        </div>
-        <div class="kpi-value status teal">Óptimo</div>
-        <div class="env-details">
-          <div class="env-item">
-            <span class="env-label">Temperatura</span>
-            <span class="env-val">8 °C</span>
-          </div>
-          <div class="env-item">
-            <span class="env-label">Humedad</span>
-            <span class="env-val">84 %</span>
-          </div>
-          <div class="env-item">
-            <span class="env-label">Agua en zona</span>
-            <span class="env-val">70%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom row: chart + table -->
-    <div class="bottom-row">
-      <!-- Historical chart -->
-      <div class="chart-card">
-        <h2 class="section-title">Histórico del porcentaje de agua</h2>
-        <div class="chart-container">
-          <div class="chart-y-axis">
-            <span>80</span><span>60</span><span>40</span><span>20</span><span>0</span>
-          </div>
-          <div class="chart-area">
-            <svg viewBox="0 0 560 160" preserveAspectRatio="none" class="line-chart-svg">
-              <defs>
-                <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#0d9488" stop-opacity="0.25"/>
-                  <stop offset="100%" stop-color="#0d9488" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <path d="M0,60 C40,58 80,62 112,60 C150,58 190,63 224,61 C265,59 300,58 336,60 C380,62 420,58 448,61 C490,64 525,59 560,60"
-                    fill="url(#waterGrad)" stroke="none"/>
-              <path d="M0,60 C40,58 80,62 112,60 C150,58 190,63 224,61 C265,59 300,58 336,60 C380,62 420,58 448,61 C490,64 525,59 560,60"
-                    fill="none" stroke="#0d9488" stroke-width="2.5"/>
-              <!-- Data dots -->
-              <circle cx="0" cy="60" r="4" fill="#0d9488"/>
-              <circle cx="112" cy="60" r="4" fill="#0d9488"/>
-              <circle cx="224" cy="61" r="4" fill="#0d9488"/>
-              <circle cx="336" cy="60" r="4" fill="#0d9488"/>
-              <circle cx="448" cy="61" r="4" fill="#0d9488"/>
-              <circle cx="560" cy="60" r="4" fill="#0d9488"/>
-            </svg>
-            <div class="chart-x-labels">
-              <span>Feb 27</span><span>Feb 28</span>
-              <span>Mar 1</span><span>Mar 2</span>
-              <span>Mar 3</span><span>Mar 4</span>
+      <div class="kpi-row">
+        <div class="kpi-card kpi-sensors">
+          <div class="kpi-header">...</div>
+          <div class="kpi-value">{{ dashboardData.activeSensors }}</div>
+          <div class="kpi-sub">Sensores totales: {{ dashboardData.totalSensors }}</div>
+          <div class="kpi-mini-chart">
+            <div *ngFor="let v of dashboardData.sensorHistory; let i = index" class="bar-col">
+              <div class="bar green" [style.height.px]="v * 2.5"></div>
+              <span class="bar-label">Mar {{ i + 1 }}</span>
             </div>
           </div>
         </div>
-        <div class="chart-legend">
-          <div class="legend-item">
-            <div class="legend-dot teal"></div>
-            <span>Porcentaje de agua</span>
+
+        <div class="kpi-card kpi-water">
+          <div class="kpi-header">...</div>
+          <div class="kpi-value status">{{ dashboardData.environmentalSummary.status }}</div>
+          <div class="kpi-sub">Promedio de agua en la zona: {{ dashboardData.environmentalSummary.waterLevel }}%</div>
+          <div class="kpi-mini-chart">
+            <div *ngFor="let v of dashboardData.waterHistory; let i = index" class="bar-col">
+              <div class="bar blue" [style.height.px]="v / 4"></div>
+              <span class="bar-label">Mar {{ i + 1 }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-alerts">
+          <div class="kpi-header">...</div>
+          <div class="kpi-value alert-val">{{ dashboardData.criticalAlerts }}</div>
+          <div class="kpi-sub">Sensores inactivos: {{ dashboardData.inactiveSensors }}</div>
+          <div class="kpi-mini-chart">
+            <div *ngFor="let v of dashboardData.alertHistory; let i = index" class="bar-col">
+              <div class="bar red" [style.height.px]="v * 20"></div>
+              <span class="bar-label">Mar {{ i + 1 }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-env">
+          <div class="kpi-header">...</div>
+          <div class="kpi-value status teal">{{ dashboardData.environmentalSummary.status }}</div>
+          <div class="env-details">
+            <div class="env-item">
+              <span class="env-label">Temperatura</span>
+              <span class="env-val">{{ dashboardData.environmentalSummary.temperature }} °C</span>
+            </div>
+            <div class="env-item">
+              <span class="env-label">Humedad</span>
+              <span class="env-val">{{ dashboardData.environmentalSummary.humidity }} %</span>
+            </div>
+            <div class="env-item">
+              <span class="env-label">Agua en zona</span>
+              <span class="env-val">{{ dashboardData.environmentalSummary.waterLevel }}%</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Recent readings table -->
-      <div class="table-card">
-        <h2 class="section-title">Lecturas recientes</h2>
-        <div class="table-wrapper">
-          <table class="readings-table">
-            <thead>
-            <tr>
-              <th>Marca de tiempo</th>
-              <th>ID sensor</th>
-              <th>Tipo</th>
-              <th>Valor</th>
-              <th>Unidad</th>
-              <th>Estado</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let r of readings">
-              <td class="font-mono time-col">{{ r.timestamp }}</td>
-              <td class="font-mono id-col">{{ r.sensorId }}</td>
-              <td>{{ r.type }}</td>
-              <td class="font-mono">{{ r.value }}</td>
-              <td class="unit-col">{{ r.unit }}</td>
-              <td>
-                <span class="status-badge" [class]="r.statusClass">{{ r.status }}</span>
-              </td>
-            </tr>
-            </tbody>
-          </table>
+      <div class="bottom-row">
+        <div class="chart-card">...</div>
+
+        <div class="table-card">
+          <h2 class="section-title">Lecturas recientes</h2>
+          <div class="table-wrapper">
+            <table class="readings-table">
+              <thead>...</thead>
+              <tbody>
+              <tr *ngFor="let r of dashboardData.readings">
+                <td class="font-mono time-col">{{ r.timestamp }}</td>
+                <td class="font-mono id-col">{{ r.sensorId }}</td>
+                <td>{{ r.type }}</td>
+                <td class="font-mono">{{ r.value }}</td>
+                <td class="unit-col">{{ r.unit }}</td>
+                <td>
+                  <span class="status-badge" [class]="r.statusClass">{{ r.status }}</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </div>
