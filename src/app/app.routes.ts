@@ -19,7 +19,8 @@ export const routes: Routes = [
   },
   {
     path: 'map',
-    loadComponent: () => import('./features/map/map.component').then((m) => m.MapComponent),
+    loadComponent: () =>
+      import('./features/map/map.component').then((m) => m.MapComponent),
   },
   { path: '**', redirectTo: '/login' },
 ];

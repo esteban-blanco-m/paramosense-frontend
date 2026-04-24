@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router'; // Importamos Router
+import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../core/services/auth.service'; // Importamos el servicio
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,8 +16,9 @@ export class LoginComponent {
   password = '';
   rememberMe = false;
   showPassword = false;
+  errorMessage: string | null = null;
+  successMessage: string | null = null;
 
-  // Inyectamos el AuthService y el Router
   constructor(private authService: AuthService, private router: Router) {}
 
   togglePassword() {
@@ -25,19 +26,26 @@ export class LoginComponent {
   }
 
   onLogin() {
-    const credentials = {
-      email: this.email,
-      password: this.password
-    };
+    this.errorMessage = null;
+    this.successMessage = null;
+
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Por favor, ingresa tu correo y contraseña.';
+      return;
+    }
+
+    const credentials = { email: this.email, password: this.password };
 
     this.authService.login(credentials).subscribe({
-      next: (response) => {
-        // Si el login es correcto, guardamos el nombre del usuario y vamos al dashboard
-        console.log('Bienvenido', response.userName);
-        this.router.navigate(['/dashboard']);
+      next: (response: any) => {
+        localStorage.setItem('userEmail', response.email);
+        this.successMessage = '¡Inicio de sesión exitoso! Redirigiendo...';
+        setTimeout(() => {
+          this.router.navigate(['/dashboard']);
+        }, 1000);
       },
       error: (err) => {
-        alert('Error al iniciar sesión: Verifica tu correo o contraseña');
+        this.errorMessage = err.error?.message || 'Error al iniciar sesión: Verifica tu correo o contraseña.';
       }
     });
   }

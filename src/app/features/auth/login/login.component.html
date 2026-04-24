@@ -41,7 +41,6 @@
     </div>
   </div>
 
-  <!-- Right panel: login form -->
   <div class="login-right">
     <div class="login-card">
       <div class="card-header">
@@ -63,7 +62,6 @@
         </div>
       </div>
 
-      <!-- Importante: Al enviar el formulario llamamos a onLogin() -->
       <form class="login-form" (ngSubmit)="onLogin()">
         <div class="field-group">
           <label class="field-label" for="email">Correo electrónico</label>
@@ -110,7 +108,14 @@
           <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <!-- Botón de submit -->
+        <div *ngIf="errorMessage" class="alert-message error" style="color: #dc2626; background-color: #fee2e2; border: 1px solid #f87171; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 500; margin-bottom: 15px; text-align: center;">
+          {{ errorMessage }}
+        </div>
+
+        <div *ngIf="successMessage" class="alert-message success" style="color: #15803d; background-color: #dcfce7; border: 1px solid #86efac; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: 500; margin-bottom: 15px; text-align: center;">
+          {{ successMessage }}
+        </div>
+
         <button type="submit" class="btn-primary">
           Iniciar sesión
         </button>
