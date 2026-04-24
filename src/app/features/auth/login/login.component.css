@@ -43,9 +43,10 @@
 .brand-icon {
   width: 44px; height: 44px;
   background: rgba(255,255,255,0.15);
-  border-radius: 12px;
   display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(8px);
+  object-fit: contain; /* Esto asegura que el logo mantenga sus proporciones exactas */
+  border-radius: inherit;
 }
 
 .brand-text {
@@ -188,8 +189,10 @@
 }
 .brand-icon-mini {
   width: 24px; height: 24px;
-  background: rgba(255,255,255,0.2); border-radius: 6px;
+  background: rgba(255,255,255,0.2);
   display: flex; align-items: center; justify-content: center;
+  object-fit: contain; /* Esto asegura que el logo mantenga sus proporciones exactas */
+  border-radius: inherit;
 }
 
 .card-title-area {
