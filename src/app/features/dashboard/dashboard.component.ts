@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
 
-// 1. INTERFACES ACTUALIZADAS CON LOS CAMPOS FALTANTES
 export interface SensorReading {
   _id?: string;
   timestamp: string;
@@ -18,8 +17,8 @@ export interface SensorReading {
 
 export interface DashboardData {
   _id?: string;
-  userEmail: string;         // Faltaba
-  locationName: string;      // Faltaba
+  userEmail: string;
+  locationName: string;
   syncTime: string;
   userName: string;
   currentDate: string;
@@ -30,7 +29,7 @@ export interface DashboardData {
   sensorHistory: number[];
   waterHistory: number[];
   alertHistory: number[];
-  environmentalSummary: {
+  environmentalSummary?: {
     temperature: number;
     humidity: number;
     waterLevel: number;
@@ -47,12 +46,14 @@ export interface DashboardData {
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  // 2. TIPADO ESTRICTO EN LUGAR DE "any"
   dashboardData: DashboardData | null = null;
   isLoading = true;
   error = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.fetchDashboardData();
@@ -60,22 +61,24 @@ export class DashboardComponent implements OnInit {
 
   fetchDashboardData() {
     this.isLoading = true;
-    this.error = ''; // 3. LIMPIAR EL ERROR EN CADA NUEVO INTENTO
+    this.error = '';
     const userEmail = localStorage.getItem('userEmail');
 
     if (!userEmail) {
       this.error = 'No se encontró sesión de usuario.';
       this.isLoading = false;
+      this.cdr.detectChanges();
       return;
     }
 
     const apiUrl = `http://localhost:3000/api/dashboard/${userEmail}`;
 
-    // 4. SE LE INDICA A HTTPCLIENT QUÉ TIPO DE DATO ESPERAR
     this.http.get<DashboardData>(apiUrl).subscribe({
       next: (data) => {
+        console.log('✅ Datos inyectados en la vista:', data);
         this.dashboardData = data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('🚨 Error conectando al servidor:', err);
@@ -83,7 +86,7 @@ export class DashboardComponent implements OnInit {
 
         this.dashboardData = {
           userEmail: userEmail,
-          locationName: "Ubicación desconocida", // Valor por defecto
+          locationName: "Ubicación desconocida",
           syncTime: "--:--",
           userName: "Usuario",
           currentDate: new Date().toLocaleDateString('es-CO', { month: 'long', day: 'numeric' }),
@@ -98,6 +101,8 @@ export class DashboardComponent implements OnInit {
           readings: []
         };
         this.isLoading = false;
+
+        this.cdr.detectChanges();
       }
     });
   }

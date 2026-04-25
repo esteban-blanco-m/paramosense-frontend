@@ -44,8 +44,8 @@
 
         <div class="kpi-card kpi-water">
           <div class="kpi-header">...</div>
-          <div class="kpi-value status">{{ dashboardData.environmentalSummary.status }}</div>
-          <div class="kpi-sub">Promedio de agua en la zona: {{ dashboardData.environmentalSummary.waterLevel }}%</div>
+          <div class="kpi-value status">{{ dashboardData.environmentalSummary?.status }}</div>
+          <div class="kpi-sub">Promedio de agua en la zona: {{ dashboardData.environmentalSummary?.waterLevel }}%</div>
           <div class="kpi-mini-chart">
             <div *ngFor="let v of dashboardData.waterHistory; let i = index" class="bar-col">
               <div class="bar blue" [style.height.px]="v / 4"></div>
@@ -68,19 +68,19 @@
 
         <div class="kpi-card kpi-env">
           <div class="kpi-header">...</div>
-          <div class="kpi-value status teal">{{ dashboardData.environmentalSummary.status }}</div>
+          <div class="kpi-value status teal">{{ dashboardData.environmentalSummary?.status }}</div>
           <div class="env-details">
             <div class="env-item">
               <span class="env-label">Temperatura</span>
-              <span class="env-val">{{ dashboardData.environmentalSummary.temperature }} °C</span>
+              <span class="env-val">{{ dashboardData.environmentalSummary?.temperature }} °C</span>
             </div>
             <div class="env-item">
               <span class="env-label">Humedad</span>
-              <span class="env-val">{{ dashboardData.environmentalSummary.humidity }} %</span>
+              <span class="env-val">{{ dashboardData.environmentalSummary?.humidity }} %</span>
             </div>
             <div class="env-item">
               <span class="env-label">Agua en zona</span>
-              <span class="env-val">{{ dashboardData.environmentalSummary.waterLevel }}%</span>
+              <span class="env-val">{{ dashboardData.environmentalSummary?.waterLevel }}%</span>
             </div>
           </div>
         </div>
