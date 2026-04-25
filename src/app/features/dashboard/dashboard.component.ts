@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
+import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
 
 export interface SensorReading {
   _id?: string;
@@ -43,7 +43,7 @@ export interface DashboardData {
   standalone: true,
   imports: [CommonModule, RouterModule, NavbarComponent],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent implements OnInit {
   dashboardData: DashboardData | null = null;
@@ -52,7 +52,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -75,20 +75,28 @@ export class DashboardComponent implements OnInit {
 
     this.http.get<DashboardData>(apiUrl).subscribe({
       next: (data) => {
-        console.log('Datos inyectados en la vista:', data);
         this.dashboardData = data;
+
+        if (this.dashboardData) {
+          this.dashboardData.syncTime = new Date().toLocaleTimeString('es-CO', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+        }
+
         this.isLoading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('🚨 Error conectando al servidor:', err);
+        console.error('Error conectando al servidor:', err);
         this.error = 'No se encontraron datos. Mostrando panel por defecto.';
 
         this.dashboardData = {
           userEmail: userEmail,
-          locationName: "Ubicación desconocida",
-          syncTime: "--:--",
-          userName: "Usuario",
+          locationName: 'Ubicación desconocida',
+          syncTime: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', hour12: false }),
+          userName: 'Usuario',
           currentDate: new Date().toLocaleDateString('es-CO', { month: 'long', day: 'numeric' }),
           activeSensors: 0,
           totalSensors: 0,
@@ -97,17 +105,66 @@ export class DashboardComponent implements OnInit {
           sensorHistory: [0, 0, 0, 0],
           waterHistory: [0, 0, 0, 0],
           alertHistory: [0, 0, 0, 0],
-          environmentalSummary: { temperature: 0, humidity: 0, waterLevel: 0, status: 'Desconectado' },
-          readings: []
+          environmentalSummary: {
+            temperature: 0,
+            humidity: 0,
+            waterLevel: 0,
+            status: 'Desconectado',
+          },
+          readings: [],
         };
         this.isLoading = false;
-
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 
   refresh() {
     this.fetchDashboardData();
+  }
+
+  get waterChartPath(): string {
+    if (!this.dashboardData?.waterHistory?.length) return 'M0,35 L100,35';
+
+    const data = this.dashboardData.waterHistory;
+    const max = Math.max(...data);
+    const min = Math.min(...data);
+    const range = max - min === 0 ? 1 : max - min;
+
+    return data
+      .map((val, i) => {
+        const x = (i / (data.length - 1 || 1)) * 100;
+        const normalized = (val - min) / range;
+        const y = 35 - normalized * 30;
+        return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+      })
+      .join(' ');
+  }
+
+  get waterChartArea(): string {
+    return `${this.waterChartPath} L100,40 L0,40 Z`;
+  }
+
+  get chartYLabels(): number[] {
+    if (!this.dashboardData?.waterHistory?.length) return [100, 75, 50, 25, 0];
+
+    const data = this.dashboardData.waterHistory;
+    const max = Math.max(...data);
+    const min = Math.min(...data);
+    const range = max - min === 0 ? 100 : max - min;
+
+    return [max, min + range * 0.75, min + range * 0.5, min + range * 0.25, min].map((v) =>
+      Math.round(v),
+    );
+  }
+
+  get chartXLabels(): string[] {
+    if (!this.dashboardData?.readings?.length) {
+      return ['08:00', '09:00', '10:00', '11:00', '12:00'];
+    }
+    return this.dashboardData.readings
+      .map((r) => r.timestamp)
+      .slice(0, 6)
+      .reverse();
   }
 }

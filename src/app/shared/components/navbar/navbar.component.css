@@ -22,7 +22,6 @@
 .brand-icon {
   width: 44px;
   height: 44px;
-  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,14 +40,14 @@
 }
 
 .brand-name {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 800;
   color: var(--text-primary);
   letter-spacing: 1.5px;
 }
 
 .brand-sub {
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 2.5px;
@@ -69,7 +68,7 @@
   font-weight: 500;
   color: var(--text-secondary);
   transition: all 0.15s;
-  white-space: nowrap;
+  text-decoration: none;
 }
 
 .nav-link:hover {
@@ -86,7 +85,7 @@
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex-shrink: 0;
 }
 
@@ -110,25 +109,12 @@
 
 .sync-badge svg {
   color: var(--primary);
-  flex-shrink: 0;
 }
 
-.user-avatar {
+.user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.user-avatar img {
-  width: 32px;
+  padding-left: 16px;
+  border-left: 1px solid var(--border);
   height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--border-mid);
-}
-
-.user-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
 }

@@ -1,196 +1,79 @@
 <div class="map-page">
-  <app-navbar [syncTime]="syncTime" [userName]="userName"></app-navbar>
+  <app-navbar></app-navbar>
 
   <div class="map-body">
-    <!-- Page Header -->
     <div class="page-header">
       <div class="header-left">
         <h1 class="page-title">Mapa del sector seleccionado del páramo</h1>
-        <p class="page-subtitle">Mapa de los sensores IoT ubicados en la zona seleccionada</p>
+        <p class="page-subtitle">Visualización en tiempo real de los sensores IoT desplegados.</p>
       </div>
       <div class="header-right">
         <div class="date-badge">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
           <span>Fecha: <strong>{{ currentDate }}</strong></span>
         </div>
         <button class="btn-refresh" (click)="refresh()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0118.8-4.3M22 12.5a10 10 0 01-18.8 4.2"></path></svg>
           Actualizar
         </button>
         <div class="location-badge">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <strong>Ubicación:</strong> Páramo de Chingaza – Sector B
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <strong>Ubicación:</strong> Páramo de Chingaza
         </div>
       </div>
     </div>
 
-    <!-- Map container + legend -->
     <div class="map-content">
       <div class="map-card">
         <div class="map-label">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-          Mapa de la zona:
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+          Mapa interactivo de sensores:
         </div>
 
-        <!-- SVG topographic map illustration -->
-        <div class="map-svg-container">
-          <svg viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg" class="topo-map">
-            <!-- Background terrain -->
-            <rect width="900" height="480" fill="#c8e6c4"/>
+        <div class="map-wrapper">
+          <input type="text" class="map-search-bar" placeholder="Buscar sensor o sector..." />
 
-            <!-- Topo contour lines -->
-            <ellipse cx="450" cy="240" rx="420" ry="220" fill="none" stroke="#a5c8a0" stroke-width="1" opacity="0.6"/>
-            <ellipse cx="450" cy="240" rx="370" ry="185" fill="none" stroke="#a5c8a0" stroke-width="1" opacity="0.5"/>
-            <ellipse cx="450" cy="240" rx="310" ry="150" fill="none" stroke="#a5c8a0" stroke-width="1" opacity="0.5"/>
-            <ellipse cx="450" cy="240" rx="250" ry="115" fill="none" stroke="#8db896" stroke-width="1" opacity="0.6"/>
+          <google-map
+            height="500px"
+            width="100%"
+            [center]="center"
+            [zoom]="zoom"
+            [options]="mapOptions">
 
-            <!-- Elevation labels -->
-            <text x="80" y="120" fill="#6b9e74" font-size="11" font-family="monospace">3200m</text>
-            <text x="750" y="160" fill="#6b9e74" font-size="11" font-family="monospace">3200m</text>
-            <text x="820" y="350" fill="#6b9e74" font-size="11" font-family="monospace">3300m</text>
-            <text x="130" y="380" fill="#6b9e74" font-size="11" font-family="monospace">3300m</text>
-            <text x="400" y="60" fill="#6b9e74" font-size="11" font-family="monospace">3400m</text>
+            <map-marker
+              *ngFor="let marker of markers"
+              [position]="marker.position"
+              [title]="marker.title"
+              [options]="{ icon: marker.icon }">
+            </map-marker>
 
-            <!-- Road -->
-            <path d="M120 80 Q200 160 180 260 Q160 340 220 420" fill="none" stroke="#d4c5a9" stroke-width="6" stroke-linecap="round"/>
-            <path d="M120 80 Q200 160 180 260 Q160 340 220 420" fill="none" stroke="#c4b599" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 6"/>
-            <!-- Road label -->
-            <text x="100" y="250" fill="#8b7355" font-size="11" font-family="sans-serif" transform="rotate(-70,120,250)">Fomeque</text>
-
-            <!-- Lake body -->
-            <ellipse cx="460" cy="240" rx="195" ry="110" fill="#7ecdf5" opacity="0.85"/>
-            <ellipse cx="460" cy="240" rx="185" ry="100" fill="#5bb8e8" opacity="0.6"/>
-            <ellipse cx="460" cy="240" rx="165" ry="85" fill="rgba(20,184,166,0.25)"/>
-
-            <!-- Lake label -->
-            <text x="380" y="225" fill="#1a6a8a" font-size="13" font-weight="600" font-family="sans-serif">Laguna</text>
-            <text x="375" y="242" fill="#1a6a8a" font-size="13" font-weight="600" font-family="sans-serif">Chingaza</text>
-
-            <!-- Lake sub-label -->
-            <text x="440" y="300" fill="#2a8fb0" font-size="11" font-family="sans-serif">Lago Chingaza</text>
-
-            <!-- Fomeque river/stream -->
-            <path d="M280 180 Q320 220 350 260 Q370 290 380 330" fill="none" stroke="#7ecdf5" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-            <text x="282" y="210" fill="#2a8fb0" font-size="10" font-family="sans-serif">Fomeque</text>
-
-            <!-- ─── FUNCTIONAL SENSOR nodes (green) ─── -->
-            <!-- Sensor 1: top-left area -->
-            <g transform="translate(295, 115)" class="sensor-node functional">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="295,99 291,88 299,88" fill="#16a34a"/>
-
-            <!-- Sensor 2: top center-left -->
-            <g transform="translate(390, 95)">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="390,79 386,68 394,68" fill="#16a34a"/>
-
-            <!-- Sensor 3: top right of lake -->
-            <g transform="translate(555, 105)">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="555,89 551,78 559,78" fill="#16a34a"/>
-
-            <!-- Sensor 4: right side -->
-            <g transform="translate(650, 150)">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="650,134 646,123 654,123" fill="#16a34a"/>
-
-            <!-- Sensor 5: right-center -->
-            <g transform="translate(670, 230)">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="670,214 666,203 674,203" fill="#16a34a"/>
-
-            <!-- Sensor 6: inside lake left -->
-            <g transform="translate(360, 220)">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="360,204 356,193 364,193" fill="#16a34a"/>
-
-            <!-- Sensor 7: inside lake center -->
-            <g transform="translate(480, 215)">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="480,199 476,188 484,188" fill="#16a34a"/>
-
-            <!-- Sensor 8: bottom left of lake -->
-            <g transform="translate(340, 310)">
-              <circle r="14" fill="white" stroke="#16a34a" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#16a34a">((·))</text>
-            </g>
-            <polygon points="340,294 336,283 344,283" fill="#16a34a"/>
-
-            <!-- ─── WARNING SENSOR nodes (red triangle) ─── -->
-            <!-- Warning 1: top center -->
-            <g transform="translate(470, 108)">
-              <circle r="16" fill="white" stroke="#dc2626" stroke-width="2" opacity="0.95"/>
-              <text x="0" y="5" text-anchor="middle" font-size="18" fill="#dc2626">⚠</text>
-            </g>
-
-            <!-- Warning 2: right-center lake edge -->
-            <g transform="translate(615, 298)">
-              <circle r="16" fill="white" stroke="#dc2626" stroke-width="2" opacity="0.95"/>
-              <text x="0" y="5" text-anchor="middle" font-size="18" fill="#dc2626">⚠</text>
-            </g>
-
-            <!-- ─── PLANNED SENSOR nodes (yellow) ─── -->
-            <!-- Planned 1: bottom center -->
-            <g transform="translate(480, 375)">
-              <circle r="14" fill="white" stroke="#d97706" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#d97706">((·))</text>
-            </g>
-            <polygon points="480,359 476,348 484,348" fill="#d97706"/>
-
-            <!-- Planned 2: bottom right -->
-            <g transform="translate(600, 355)">
-              <circle r="14" fill="white" stroke="#d97706" stroke-width="2" opacity="0.9"/>
-              <text x="0" y="4" text-anchor="middle" font-size="9" fill="#d97706">((·))</text>
-            </g>
-            <polygon points="600,339 596,328 604,328" fill="#d97706"/>
-
-            <!-- Laguna de Chingaza icon -->
-            <circle cx="540" cy="170" r="12" fill="#fff" stroke="#0d9488" stroke-width="2"/>
-            <text x="540" y="174" text-anchor="middle" font-size="12" fill="#0d9488">🏔</text>
-            <text x="588" y="174" fill="#0d9488" font-size="10" font-weight="600">Laguna de Chingaza</text>
-          </svg>
+          </google-map>
         </div>
       </div>
 
-      <!-- Legend -->
       <div class="legend-panel">
         <h3 class="legend-title">Convenciones:</h3>
         <div class="legend-items">
-          <div class="legend-item functional">
+          <div class="legend-item">
             <div class="legend-icon-box green">
               <span class="sensor-icon-text">((·))</span>
             </div>
             <span class="legend-label">Sensor<br>funcional</span>
           </div>
-          <div class="legend-item warning-item">
+          <div class="legend-item">
             <div class="legend-icon-box red">
               <span class="sensor-icon-text">⚠</span>
             </div>
-            <span class="legend-label">Sensor que<br>necesita revisión</span>
+            <span class="legend-label">Sensor con<br>alerta crítica</span>
           </div>
-          <div class="legend-item planned">
+          <div class="legend-item">
             <div class="legend-icon-box yellow">
               <span class="sensor-icon-text">((·))</span>
             </div>
-            <span class="legend-label">Sensor que será<br>instalado próximamente</span>
+            <span class="legend-label">Instalación<br>planificada</span>
           </div>
         </div>
 
-        <!-- Quick stats -->
         <div class="map-stats">
           <div class="map-stat">
             <div class="stat-dot green"></div>

@@ -8,30 +8,38 @@
   </div>
 
   <ng-container *ngIf="dashboardData && !isLoading">
-    <app-navbar [syncTime]="dashboardData.syncTime" [userName]="dashboardData.userName"></app-navbar>
+    <app-navbar></app-navbar>
 
     <div class="dashboard-body">
       <div class="page-header">
         <div class="header-left">
           <h1 class="page-title">Centro de monitoreo hídrico del páramo</h1>
-          <p class="page-subtitle">Seguimiento en tiempo real de sensores IoT...</p>
+          <p class="page-subtitle">Seguimiento en tiempo real de sensores IoT desplegados en la zona.</p>
         </div>
         <div class="header-right">
           <div class="date-badge">
-            <svg>...</svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
             <span>Fecha: <strong>{{ dashboardData.currentDate }}</strong></span>
           </div>
           <button class="btn-refresh" (click)="refresh()">
-            <svg>...</svg> Actualizar
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Actualizar
           </button>
           <div class="location-badge">
-            <svg>...</svg> <strong>Ubicación:</strong> {{ dashboardData.locationName }} </div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <strong>Ubicación:</strong> {{ dashboardData.locationName }}
+          </div>
         </div>
       </div>
 
       <div class="kpi-row">
         <div class="kpi-card kpi-sensors">
-          <div class="kpi-header">...</div>
+          <div class="kpi-header">
+            <span class="kpi-label">Sensores Activos</span>
+            <div class="kpi-icon-wrapper green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            </div>
+          </div>
           <div class="kpi-value">{{ dashboardData.activeSensors }}</div>
           <div class="kpi-sub">Sensores totales: {{ dashboardData.totalSensors }}</div>
           <div class="kpi-mini-chart">
@@ -43,7 +51,12 @@
         </div>
 
         <div class="kpi-card kpi-water">
-          <div class="kpi-header">...</div>
+          <div class="kpi-header">
+            <span class="kpi-label">Estado del Agua</span>
+            <div class="kpi-icon-wrapper blue">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+            </div>
+          </div>
           <div class="kpi-value status">{{ dashboardData.environmentalSummary?.status }}</div>
           <div class="kpi-sub">Promedio de agua en la zona: {{ dashboardData.environmentalSummary?.waterLevel }}%</div>
           <div class="kpi-mini-chart">
@@ -55,7 +68,12 @@
         </div>
 
         <div class="kpi-card kpi-alerts">
-          <div class="kpi-header">...</div>
+          <div class="kpi-header">
+            <span class="kpi-label">Alertas Críticas</span>
+            <div class="kpi-icon-wrapper red">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            </div>
+          </div>
           <div class="kpi-value alert-val">{{ dashboardData.criticalAlerts }}</div>
           <div class="kpi-sub">Sensores inactivos: {{ dashboardData.inactiveSensors }}</div>
           <div class="kpi-mini-chart">
@@ -67,7 +85,12 @@
         </div>
 
         <div class="kpi-card kpi-env">
-          <div class="kpi-header">...</div>
+          <div class="kpi-header">
+            <span class="kpi-label">Clima Local</span>
+            <div class="kpi-icon-wrapper teal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+            </div>
+          </div>
           <div class="kpi-value status teal">{{ dashboardData.environmentalSummary?.status }}</div>
           <div class="env-details">
             <div class="env-item">
@@ -87,13 +110,41 @@
       </div>
 
       <div class="bottom-row">
-        <div class="chart-card">...</div>
 
+        <div class="chart-card">
+          <h2 class="section-title">Histórico de Nivel de Agua</h2>
+          <div class="chart-container">
+            <div class="chart-y-axis">
+              <span *ngFor="let label of chartYLabels">{{ label }}</span>
+            </div>
+            <div class="chart-area">
+              <svg class="line-chart-svg" viewBox="0 0 100 40" preserveAspectRatio="none">
+                <path [attr.d]="waterChartPath" fill="none" stroke="var(--primary)" stroke-width="1.5" vector-effect="non-scaling-stroke"></path>
+                <path [attr.d]="waterChartArea" fill="rgba(13,148,136,0.1)" stroke="none"></path>
+              </svg>
+              <div class="chart-x-labels">
+                <span *ngFor="let time of chartXLabels">{{ time }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot teal"></div> Nivel de Agua</div>
+          </div>
+        </div>
         <div class="table-card">
           <h2 class="section-title">Lecturas recientes</h2>
           <div class="table-wrapper">
             <table class="readings-table">
-              <thead>...</thead>
+              <thead>
+              <tr>
+                <th>Hora</th>
+                <th>ID Sensor</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Unidad</th>
+                <th>Estado</th>
+              </tr>
+              </thead>
               <tbody>
               <tr *ngFor="let r of dashboardData.readings">
                 <td class="font-mono time-col">{{ r.timestamp }}</td>
