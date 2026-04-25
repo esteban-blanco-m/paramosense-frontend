@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit {
 
     this.http.get<DashboardData>(apiUrl).subscribe({
       next: (data) => {
-        console.log('✅ Datos inyectados en la vista:', data);
+        console.log('Datos inyectados en la vista:', data);
         this.dashboardData = data;
         this.isLoading = false;
         this.cdr.detectChanges();
