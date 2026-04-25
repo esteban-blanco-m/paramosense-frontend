@@ -4,6 +4,41 @@ import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NavbarComponent } from "../../shared/components/navbar/navbar.component";
 
+// 1. INTERFACES ACTUALIZADAS CON LOS CAMPOS FALTANTES
+export interface SensorReading {
+  _id?: string;
+  timestamp: string;
+  sensorId: string;
+  type: string;
+  value: number;
+  unit: string;
+  status: string;
+  statusClass: string;
+}
+
+export interface DashboardData {
+  _id?: string;
+  userEmail: string;         // Faltaba
+  locationName: string;      // Faltaba
+  syncTime: string;
+  userName: string;
+  currentDate: string;
+  activeSensors: number;
+  totalSensors: number;
+  criticalAlerts: number;
+  inactiveSensors: number;
+  sensorHistory: number[];
+  waterHistory: number[];
+  alertHistory: number[];
+  environmentalSummary: {
+    temperature: number;
+    humidity: number;
+    waterLevel: number;
+    status: string;
+  };
+  readings: SensorReading[];
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -12,7 +47,8 @@ import { NavbarComponent } from "../../shared/components/navbar/navbar.component
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  dashboardData: any = null;
+  // 2. TIPADO ESTRICTO EN LUGAR DE "any"
+  dashboardData: DashboardData | null = null;
   isLoading = true;
   error = '';
 
@@ -21,8 +57,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.fetchDashboardData();
   }
+
   fetchDashboardData() {
     this.isLoading = true;
+    this.error = ''; // 3. LIMPIAR EL ERROR EN CADA NUEVO INTENTO
     const userEmail = localStorage.getItem('userEmail');
 
     if (!userEmail) {
@@ -33,7 +71,8 @@ export class DashboardComponent implements OnInit {
 
     const apiUrl = `http://localhost:3000/api/dashboard/${userEmail}`;
 
-    this.http.get(apiUrl).subscribe({
+    // 4. SE LE INDICA A HTTPCLIENT QUÉ TIPO DE DATO ESPERAR
+    this.http.get<DashboardData>(apiUrl).subscribe({
       next: (data) => {
         this.dashboardData = data;
         this.isLoading = false;
@@ -44,10 +83,10 @@ export class DashboardComponent implements OnInit {
 
         this.dashboardData = {
           userEmail: userEmail,
+          locationName: "Ubicación desconocida", // Valor por defecto
           syncTime: "--:--",
           userName: "Usuario",
           currentDate: new Date().toLocaleDateString('es-CO', { month: 'long', day: 'numeric' }),
-          locationName: "Buscando ubicación...",
           activeSensors: 0,
           totalSensors: 0,
           criticalAlerts: 0,
