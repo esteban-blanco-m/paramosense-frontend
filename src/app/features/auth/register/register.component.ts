@@ -64,6 +64,11 @@ export class RegisterComponent {
 
     this.authService.register(userData).subscribe({
       next: (response) => {
+        if (this.formData.area) {
+          localStorage.setItem('userLocation', this.formData.area);
+        }
+
+
         this.successMessage = '¡Registro exitoso! Redirigiendo al login...';
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -14,7 +14,8 @@ export class NavbarComponent implements OnInit {
   userName: string = 'Cargando...';
   syncTime: string = '--:--';
 
-  constructor(private http: HttpClient) {}
+  // Inyectamos el Router
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.fetchUserData();
@@ -23,16 +24,19 @@ export class NavbarComponent implements OnInit {
 
   fetchUserData() {
     const userEmail = localStorage.getItem('userEmail');
-    if (userEmail) {
-      this.http.get<any>(`http://localhost:3000/api/dashboard/${userEmail}`).subscribe({
-        next: (data) => {
-          this.userName = data.userName;
-        },
-        error: () => {
-          this.userName = 'Usuario';
-        }
-      });
+    if (!userEmail) {
+      this.userName = 'Usuario';
+      return;
     }
+
+    this.http.get<any>(`http://localhost:3000/api/dashboard/${userEmail}`).subscribe({
+      next: (data) => {
+        this.userName = data.userName || 'Usuario';
+      },
+      error: () => {
+        this.userName = 'Usuario';
+      }
+    });
   }
 
   updateClock() {
@@ -41,5 +45,10 @@ export class NavbarComponent implements OnInit {
       minute: '2-digit',
       hour12: false
     });
+  }
+
+  logout() {
+    localStorage.removeItem('userEmail');
+    this.router.navigate(['/login']);
   }
 }

@@ -1,0 +1,53 @@
+[
+  {
+    "locationId": "chingaza",
+    "locationName": "Páramo de Chingaza (Embalse de Chuza)",
+    "mapCenter": { "lat": 4.6250, "lng": -73.7430 },
+    "mapZoom": 14,
+    "sensors": [
+      { "sensorId": "CH-101", "type": "Nivel de Agua", "lat": 4.6235, "lng": -73.7410, "status": "Funcional", "statusClass": "normal" },
+      { "sensorId": "CH-102", "type": "Humedad", "lat": 4.6280, "lng": -73.7425, "status": "Funcional", "statusClass": "normal" },
+      { "sensorId": "CH-105", "type": "Temperatura", "lat": 4.6210, "lng": -73.7450, "status": "Crítico", "statusClass": "critical" }
+    ]
+  },
+  {
+    "locationId": "sumapaz",
+    "locationName": "Páramo de Sumapaz (Laguna Los Tunjos)",
+    "mapCenter": { "lat": 4.2750, "lng": -74.2120 },
+    "mapZoom": 15,
+    "sensors": [
+      { "sensorId": "SU-201", "type": "Temperatura", "lat": 4.2765, "lng": -74.2100, "status": "Funcional", "statusClass": "normal" },
+      { "sensorId": "SU-202", "type": "Nivel de Agua", "lat": 4.2740, "lng": -74.2140, "status": "Advertencia", "statusClass": "warning" }
+    ]
+  },
+  {
+    "locationId": "guerrero",
+    "locationName": "Páramo de Guerrero (Represa del Neusa)",
+    "mapCenter": { "lat": 5.1550, "lng": -73.9750 },
+    "mapZoom": 14,
+    "sensors": [
+      { "sensorId": "GU-301", "type": "Nivel de Agua", "lat": 5.1570, "lng": -73.9720, "status": "Funcional", "statusClass": "normal" },
+      { "sensorId": "GU-304", "type": "Temperatura", "lat": 5.1530, "lng": -73.9780, "status": "Planificado", "statusClass": "planned" }
+    ]
+  },
+  {
+    "locationId": "rabanal",
+    "locationName": "Páramo de Rabanal (Laguna Teatinos)",
+    "mapCenter": { "lat": 5.4450, "lng": -73.5720 },
+    "mapZoom": 15,
+    "sensors": [
+      { "sensorId": "RA-401", "type": "Humedad", "lat": 5.4465, "lng": -73.5700, "status": "Funcional", "statusClass": "normal" },
+      { "sensorId": "RA-402", "type": "Nivel de Agua", "lat": 5.4435, "lng": -73.5740, "status": "Crítico", "statusClass": "critical" }
+    ]
+  },
+  {
+    "locationId": "cruz_verde",
+    "locationName": "Cruz Verde - Choachí (Laguna El Verjón)",
+    "mapCenter": { "lat": 4.5750, "lng": -73.9820 },
+    "mapZoom": 16,
+    "sensors": [
+      { "sensorId": "CV-501", "type": "Temperatura", "lat": 4.5760, "lng": -73.9810, "status": "Funcional", "statusClass": "normal" },
+      { "sensorId": "CV-502", "type": "Nivel de Agua", "lat": 4.5740, "lng": -73.9830, "status": "Funcional", "statusClass": "normal" }
+    ]
+  }
+]

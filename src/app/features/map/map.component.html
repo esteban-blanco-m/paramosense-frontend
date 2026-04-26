@@ -18,7 +18,7 @@
         </button>
         <div class="location-badge">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-          <strong>Ubicación:</strong> Páramo de Chingaza
+          <strong>Ubicación:</strong> {{ locationName }}
         </div>
       </div>
     </div>
@@ -31,22 +31,10 @@
         </div>
 
         <div class="map-wrapper">
-          <input type="text" class="map-search-bar" placeholder="Buscar sensor o sector..." />
+          <input type="text" class="map-search-bar" placeholder="Buscar sensor o sector..." [(ngModel)]="searchQuery" (input)="filterMarkers()" />
 
-          <google-map
-            height="500px"
-            width="100%"
-            [center]="center"
-            [zoom]="zoom"
-            [options]="mapOptions">
-
-            <map-marker
-              *ngFor="let marker of markers"
-              [position]="marker.position"
-              [title]="marker.title"
-              [options]="{ icon: marker.icon }">
-            </map-marker>
-
+          <google-map height="500px" width="100%" [center]="center" [zoom]="zoom" [options]="mapOptions">
+            <map-marker *ngFor="let marker of markers" [position]="marker.position" [title]="marker.title" [icon]="marker.icon"></map-marker>
           </google-map>
         </div>
       </div>
@@ -77,15 +65,15 @@
         <div class="map-stats">
           <div class="map-stat">
             <div class="stat-dot green"></div>
-            <span><strong>8</strong> funcionales</span>
+            <span><strong>{{ functionalCount }}</strong> funcionales</span>
           </div>
           <div class="map-stat">
             <div class="stat-dot red"></div>
-            <span><strong>2</strong> con alerta</span>
+            <span><strong>{{ criticalCount }}</strong> con alerta</span>
           </div>
           <div class="map-stat">
             <div class="stat-dot yellow"></div>
-            <span><strong>2</strong> planificados</span>
+            <span><strong>{{ plannedCount }}</strong> planificados</span>
           </div>
         </div>
       </div>
