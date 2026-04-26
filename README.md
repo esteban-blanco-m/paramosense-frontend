@@ -1,59 +1,151 @@
-# FrontendParamosense
+# 💧🏔️ ParamoSense - Sistema de Monitoreo Hídrico
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.7.
+ParamoSense es una plataforma web desarrollada con Angular y Node.js que permite monitorear en tiempo real el estado de fuentes hídricas y páramos mediante simulación de sensores IoT.
 
-## Development server
+La aplicación integra:
+- Mapas interactivos  
+- Dashboards dinámicos  
+- Sistema de alertas tempranas  
 
-To start a local development server, run:
+Todo enfocado en la preservación ambiental.
 
-```bash
+# --------------------------------------------------
+
+## 🚀 Tecnologías Utilizadas
+
+Frontend:
+- Angular (Componentes Standalone)
+- HTML5, CSS3, TypeScript
+
+Mapas:
+- Google Maps API (@angular/google-maps)
+
+Backend:
+- Node.js
+- Express.js
+
+Base de Datos:
+- MongoDB (local)
+- Mongoose
+
+Seguridad:
+- bcryptjs (encriptación de contraseñas)
+- CORS
+
+# --------------------------------------------------
+
+## 📋 1. Requisitos Previos
+
+1. Node.js
+   Descargar desde: https://nodejs.org/
+   Recomendado: versión LTS
+
+2. Angular CLI
+   npm install -g @angular/cli
+
+3. MongoDB Community Server
+   Descargar desde: https://www.mongodb.com/try/download/community
+   Puerto por defecto: 27017
+
+4. MongoDB Compass (Opcional)
+
+# --------------------------------------------------
+
+## ⚙️ 2. Instalación y Configuración
+
+### Paso 2.1: Ubicarse en el proyecto
+
+Abrir terminal y moverse a la carpeta raíz del proyecto:
+(cd ruta/del/proyecto)
+
+### Paso 2.2: Instalar dependencias del Frontend
+
+npm install
+
+### Paso 2.3: Instalar dependencias del Backend
+
+npm install express mongoose cors bcryptjs
+
+# --------------------------------------------------
+
+## 🗄️ 3. Configuración de la Base de Datos
+
+Asegurarse de que MongoDB esté corriendo en:
+mongodb://127.0.0.1:27017
+
+El sistema crea automáticamente:
+
+Base de datos:
+paramosense
+
+Colecciones:
+- users
+- dashboards
+
+### Normalización de zonas
+
+"Cruz Verde" -> cruz_verde
+"Sumapaz" -> sumapaz
+
+Archivo relacionado:
+src/assets/data/locations.json
+
+# --------------------------------------------------
+
+## 🏃‍♂️ 4. Ejecución de la Aplicación
+
+### Paso 4.1: Iniciar Backend
+
+node server.js
+
+Salida esperada:
+✅ Conectado a MongoDB local
+🚀 Servidor backend corriendo en http://localhost:3000
+
+### Paso 4.2: Iniciar Frontend (en otra terminal)
+
 ng serve
-```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Paso 4.3: Abrir en navegador
 
-## Code scaffolding
+http://localhost:4200
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Luego registrarse e iniciar sesión.
 
-```bash
-ng generate component component-name
-```
+# --------------------------------------------------
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🗺️ 5. Flujo y Secciones
 
-```bash
-ng generate --help
-```
+Dashboard Principal:
+- Estadísticas en tiempo real
+- Nivel hídrico
+- Alertas
+- Historial
 
-## Building
+Mapa Interactivo:
+- Google Maps
+- Estados:
+  Verde = Normal
+  Amarillo = Advertencia
+  Rojo = Crítico
 
-To build the project run:
+Archivo:
+src/assets/data/locations.json
 
-```bash
-ng build
-```
+Estado del Sistema:
+- Estable
+- Advertencia
+- Crítico
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Reportes:
+- Exportación de datos (si está implementado)
 
-## Running unit tests
+# --------------------------------------------------
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## ⚠️ Notas Finales
 
-```bash
-ng test
-```
+- No se requiere insertar datos manualmente
+- La base de datos se genera automáticamente
+- MongoDB debe estar activo durante la ejecución
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+# --------------------------------------------------
