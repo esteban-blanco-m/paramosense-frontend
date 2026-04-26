@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [CommonModule, RouterModule, NavbarComponent, GoogleMapsModule, FormsModule],
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css']
+  styleUrls: ['./map.component.css'],
 })
 export class MapComponent implements OnInit {
   currentDate = new Date().toLocaleDateString('es-CO', { month: 'long', day: 'numeric' });
@@ -35,7 +35,7 @@ export class MapComponent implements OnInit {
     rotateControlOptions: { position: 7 },
     streetViewControl: false,
     mapTypeControl: false,
-    fullscreenControl: true
+    fullscreenControl: true,
   };
 
   constructor(private http: HttpClient) {}
@@ -50,36 +50,37 @@ export class MapComponent implements OnInit {
 
   loadMapData() {
     const userEmail = localStorage.getItem('userEmail');
-    const savedLocation = localStorage.getItem('userLocation'); // Ej. 'guerrero'
+    const savedLocation = localStorage.getItem('userLocation');
+
     if (!userEmail) {
-      console.warn('No hay email guardado. Cargando mapa por defecto o desde LocalStorage.');
-      this.loadLocationFromJSON({ assignedLocationId: savedLocation });
+      console.warn('No hay email guardado. Cargando mapa por defecto.');
+      this.loadLocationFromJSON({ locationId: savedLocation || 'chingaza' });
       return;
     }
 
     this.http.get<any>(`http://localhost:3000/api/dashboard/${userEmail}`).subscribe({
       next: (userData) => {
-        if (userData.assignedLocationId) {
-          localStorage.setItem('userLocation', userData.assignedLocationId);
+        if (userData.locationId) {
+          localStorage.setItem('userLocation', userData.locationId);
         }
         this.loadLocationFromJSON(userData);
       },
       error: (err) => {
-        console.warn('Usuario nuevo detectado. Cargando el mapa desde el LocalStorage:', savedLocation);
-        this.loadLocationFromJSON({ assignedLocationId: savedLocation });
-      }
+        console.error('Error cargando Dashboard:', err);
+
+        this.loadLocationFromJSON({ locationId: savedLocation || 'chingaza' });
+      },
     });
   }
 
   loadLocationFromJSON(userData: any) {
-    const assignedLocationId = userData.assignedLocationId || userData.locationId || localStorage.getItem('userLocation') || 'chingaza';
+    const targetLocationId =
+      userData.locationId || localStorage.getItem('userLocation') || 'chingaza';
 
     this.http.get<any[]>('/assets/data/locations.json').subscribe({
       next: (allLocations) => {
-        const myLocation = allLocations.find(loc =>
-          loc.locationId === assignedLocationId ||
-          (userData.locationName && loc.locationName === userData.locationName)
-        ) || allLocations[0];
+        const myLocation =
+          allLocations.find((loc) => loc.locationId === targetLocationId) || allLocations[0];
 
         this.locationName = myLocation.locationName;
         this.center = myLocation.mapCenter;
@@ -94,9 +95,9 @@ export class MapComponent implements OnInit {
         }
       },
       error: (err) => {
-        console.error('ERROR FATAL: No se encontró el archivo src/assets/data/locations.json', err);
+        console.error('ERROR FATAL: No se encontró el archivo locations.json', err);
         this.locationName = 'Error cargando mapa base';
-      }
+      },
     });
   }
 
@@ -108,7 +109,9 @@ export class MapComponent implements OnInit {
     this.allMarkers = [];
 
     this.allMarkers = staticSensors.map((sensor: any) => {
-      const liveData = liveReadings ? liveReadings.find((r: any) => r.sensorId === sensor.sensorId) : null;
+      const liveData = liveReadings
+        ? liveReadings.find((r: any) => r.sensorId === sensor.sensorId)
+        : null;
 
       const finalStatusClass = liveData ? liveData.statusClass : sensor.statusClass;
       const finalStatus = liveData ? liveData.status : sensor.status;
@@ -127,7 +130,7 @@ export class MapComponent implements OnInit {
       return {
         position: { lat: sensor.lat, lng: sensor.lng },
         title: `${sensor.sensorId} - ${statusText}`,
-        icon: markerIcon
+        icon: markerIcon,
       };
     });
 
@@ -140,7 +143,7 @@ export class MapComponent implements OnInit {
     this.criticalCount = 0;
     this.plannedCount = 0;
 
-    this.allMarkers.forEach(marker => {
+    this.allMarkers.forEach((marker) => {
       if (marker.title.includes('CRÍTICO')) {
         this.criticalCount++;
       } else if (marker.title.includes('Planificado')) {
@@ -156,9 +159,7 @@ export class MapComponent implements OnInit {
       this.markers = [...this.allMarkers];
     } else {
       const query = this.searchQuery.toLowerCase();
-      this.markers = this.allMarkers.filter(m =>
-        m.title.toLowerCase().includes(query)
-      );
+      this.markers = this.allMarkers.filter((m) => m.title.toLowerCase().includes(query));
 
       if (this.markers.length === 1) {
         this.center = this.markers[0].position;

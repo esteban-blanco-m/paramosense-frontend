@@ -27,5 +27,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/reports/reports.component').then((m) => m.ReportsComponent),
   },
+  {
+    path: 'system-status',
+    loadComponent: () =>
+      import('./features/system-status/system-status.component').then((m) => m.SystemStatusComponent),
+  },
   { path: '**', redirectTo: '/login' },
 ];
