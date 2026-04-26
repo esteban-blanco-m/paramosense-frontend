@@ -14,7 +14,6 @@ export class NavbarComponent implements OnInit {
   userName: string = 'Cargando...';
   syncTime: string = '--:--';
 
-  // Inyectamos el Router
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
